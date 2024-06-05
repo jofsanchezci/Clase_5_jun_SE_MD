@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Experto de Diagnóstico Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema Experto de Diagnóstico Médico</h1>
+        <form id="diagnosisForm">
+            <label for="fever">Fiebre:</label>
+            <select id="fever" name="fever">
+                <option value="low">Baja</option>
+                <option value="high">Alta</option>
+            </select>
+
+            <label for="cough">Tos:</label>
+            <select id="cough" name="cough">
+                <option value="none">Ninguna</option>
+                <option value="dry">Seca</option>
+                <option value="wet">Húmeda</option>
+            </select>
+
+            <label for="fatigue">Fatiga:</label>
+            <select id="fatigue" name="fatigue">
+                <option value="no">No</option>
+                <option value="yes">Sí</option>
+            </select>
+
+            <label for="breath">Dificultad para respirar:</label>
+            <select id="breath" name="breath">
+                <option value="normal">Normal</option>
+                <option value="short">Corta</option>
+            </select>
+
+            <button type="submit">Diagnosticar</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('diagnosisForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            fetch('/diagnose', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('result').innerText = `Diagnóstico: ${result.diagnosis}`;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
